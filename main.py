@@ -9,41 +9,11 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QShortcut, QDialog
-
-from src.service.await_audit_postpone_service import public_get_await_audit_postpone, public_submit_batch_audit_postpone
-from src.service.batch_insert_customer_service import public_batch_insert, public_get_user_list
-from src.service.get_not_steward_service import public_get_not_steward
-from src.service.get_salesman_delivery_service import public_get_salesman_delivery_main
-from src.service.batch_insert_refound_service import public_batch_insert_refound
-from src.service.sync_service import public_sync_main
 from src.utils.dict_result import DictResult
 from src.utils.logging_utils import loggings_info, loggings_error
 from src.utils.paths_utils import get_resource_path
-from src.service.batch_insert_mediate_upgrade_service import public_batch_insert_mediate_upgrade
-from src.service.get_steward_server_during_service import public_get_steward_server_during_data_to_excel
-from src.service.get_server_during_service import public_get_server_during_data
-from src.service.get_law_during_service import public_get_law_during_data
-from src.service.get_law_out_service import public_get_law_out_date_data
-from src.service.get_server_out_service import public_get_server_out_date_data
-from src.service.get_salesman_company_during_service import public_get_salesman_company_during_data
-from src.service.get_two_job_during_and_out_customer_service import public_get_two_job_during_and_out_customer
-from src.service.get_delivery_url_service import public_get_delivery_url_data
-from src.service.get_register_data_service import public_get_register_data
-from src.service.get_steward_server_during_new_service import public_get_steward_server_during_data_to_excel_new
-from src.service.sys_role_service import public_add_role, public_get_role_list, public_update_role
-from src.service.sys_function_service import public_get_fun_list, public_add_function, public_update_function
-from src.service.sys_user_service import public_get_sys_user_list, public_update_sys_user, public_add_sys_user
 from src.login.login_dialog import LoginDialog
 from src.utils.session_utils import load_session
-from src.service.rollback_status_service import public_rollback_status
-from src.service.get_pause_service import public_get_pause_service
-from src.service.get_delay_service import public_get_delay_service
-from src.service.get_warning_service import public_get_warning_service
-from src.service.get_overdue_service import public_get_overdue_service
-from src.service.get_shelve_case_register_service import public_get_shelve_case_register_service
-from src.service.get_submit_case_register_service import public_get_submit_case_register_service
-from src.service.get_server_month_add_service import public_get_server_month_add_service
-
 
 # 常量定义
 class WhiteList:
@@ -91,7 +61,7 @@ class MessageType:
     GET_SERVER_MONTH_ADD_SERVICE = "get_server_month_add_service"
 
 class ErrorMessages:
-    UNKNOWN_MESSAGE_TYPE = "未知类型"
+    UNKNOWN_MESSAGE_TYPE = "未知的消息类型"
     JSON_PARSE_ERROR = "JSON解析失败"
     FILE_NOT_FOUND = "HTML文件未找到"
     UNKNOWN_ERROR = "未知错误"
@@ -238,197 +208,194 @@ class Bridge(QObject):
     @staticmethod
     def _handle_get_server_month_add_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_server_month_add_service(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_submit_case_register_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_submit_case_register_service(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_shelve_case_register_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         _ = data
-        return public_get_shelve_case_register_service()
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_overdue_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_overdue_service(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_warning_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         _ = data
-        return public_get_warning_service()
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_delay_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_delay_service(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_pause_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_pause_service(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_rollback_status(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_rollback_status(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_update_sys_user_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_update_sys_user(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_add_sys_user_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_add_sys_user(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_sys_user_list_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         _ = data
-        return public_get_sys_user_list()
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_update_function_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_update_function(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_add_function_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_add_function(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_fun_list_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_fun_list(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_update_role_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_update_role(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_add_role_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_add_role(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_role_list_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_role_list(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_sync_data(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
-        return public_sync_main(
-            main_file_name=data.get('oldFileName'),
-            out_file_name=data.get('newFileName')
-        )
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_user_list(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
         _ = data
-        return public_get_user_list()
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_batch_insert(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
-        return public_batch_insert(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_salesman_delivery(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
-        return public_get_salesman_delivery_main(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_not_steward(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
-        return public_get_not_steward(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_await_audit_postpone(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
         _ = data
-        return public_get_await_audit_postpone()
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_submit_batch_audit_postpone(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_submit_batch_audit_postpone(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_batch_insert_refound(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_batch_insert_refound(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_batch_insert_mediate_upgrade(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_batch_insert_mediate_upgrade(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_steward_server_during_data_to_excel_new(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_steward_server_during_data_to_excel_new(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_steward_server_during_data_to_excel(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_steward_server_during_data_to_excel(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_server_during_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_server_during_data(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_law_during_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_law_during_data(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_law_out_date_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_law_out_date_data(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_server_out_date_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_server_out_date_data(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_salesman_company_during_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_salesman_company_during_data(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_two_job_during_and_out_customer_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_two_job_during_and_out_customer(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_delivery_url_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
-        return public_get_delivery_url_data(data)
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_register_day_zero_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         _ = data
-        return public_get_register_data()
+        raise NotImplementedError("业务实现未包含在本仓库中")
 
     @staticmethod
     def _handle_get_my_functions(self, data: Dict[str, Any]) -> DictResult:
@@ -509,15 +476,6 @@ class MainWindow(QMainWindow):
 
         # 用 load() 加载本地文件，保留真实 URL
         self.web_view.load(QUrl.fromLocalFile(str(html_file.resolve())))
-
-    @staticmethod
-    def _read_html_file() -> str:
-        """读取HTML文件内容"""
-        html_path = get_resource_path("html")
-        html_file = Path(html_path) / "view.html"
-
-        with open(html_file, 'r', encoding='utf-8') as f:
-            return f.read()
 
 def main() -> None:
     """主函数"""
