@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="wahaha">
+<head>
+    <meta charset="UTF-8">
+    <title>数据操作窗口</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.secondary {
+            background-color: #008CBA;
+        }
+        button.secondary:hover {
+            background-color: #007B9A;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .log {
+            background: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .modal-buttons {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            margin-left: 10px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .radio-group input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #1890ff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>作者不详，遇强则弱，遇弱更弱</h1>
+
+    <div class="input-group" data-group>
+        <h3>选一个前提</h3>
+        <div id="loadingPlaceholder_0" style="color: #999; font-size: 13px;">正在加载功能列表...</div>
+        <button data-function="get_fun_list" style="display: none;" onclick="openFunListModal('functionModel', '打开函数列表窗口')" class="secondary">函数列表</button>
+        <button data-function="get_role_list" style="display: none;" onclick="openRoleListModal('roleModel', '打开角色列表窗口')" class="secondary">角色列表</button>
+        <button data-function="get_sys_user_list" style="display: none;" onclick="openSysUserListModal('sysUserModel', '打开角色列表窗口')" class="secondary">系统用户列表</button>
+    </div>
+
+    <div class="input-group" data-group>
+        <h3>选一瓶毒药</h3>
+        <div id="loadingPlaceholder_1" style="color: #999; font-size: 13px;">正在加载功能列表...</div>
+        <button data-function="sync_data_info" style="display: none;" onclick="openModal('syncModal', '打开更新线下客户表窗口')" class="secondary">更新线下客户表</button>
+        <button data-function="batch_insert" style="display: none;" onclick="openModal('batchInsertModal', '打开批量导入客户窗口')" class="secondary">导入外省客户</button>
+    </div>
+
+    <div class="input-group" data-group>
+        <h3>选一瓶解药</h3>
+        <div id="loadingPlaceholder_2" style="color: #999; font-size: 13px;">正在加载功能列表...</div>
+        <button data-function="submit_get_two_job_during_and_out_customer_data" style="display: none;" onclick="openModal('getTowJobDuringAndOutCustomerData', '获取两岗顾问在期/过期客户数据(广西)窗口')" class="secondary">获取两岗顾问在期/过期客户数据(广西)</button>
+        <button data-function="submit_get_delivery_url_data" style="display: none;" onclick="openModal('getDeliveryUrlData', '获取交付连接数据窗口')" class="secondary">获取交付连接数据（YY抽查数据）</button>
+        <button data-function="submit_get_register_day_zero_data" style="display: none;" onclick="submitOperation('submit_get_register_day_zero_data')" class="secondary">获取立案跟进天数剩余0天数据</button>
+        <button data-function="get_steward_server_during_data_to_excel_new" style="display: none;" onclick="openModal('getStewardServerDuringDataToExcelNew', '打开获取指定管家及其服务岗在期数据窗口')" class="secondary">获取指定管家及其服务岗在期数据（new）</button>
+    </div>
+
+    <div class="input-group" data-group>
+        <h3>选一块墓碑</h3>
+        <div id="loadingPlaceholder_3" style="color: #999; font-size: 13px;">正在加载功能列表...</div>
+        <button data-function="rollback_status" style="display: none;" onclick="openModal('rollbackStatusModel', '打开回滚交付状态窗口')" class="secondary">回滚交付状态</button>
+        <button data-function="get_pause_service" style="display: none;" onclick="openModal('getPauseServiceModel', '打开获取暂停事项数据窗口')" class="secondary">获取暂停事项</button>
+        <button data-function="get_delay_service" style="display: none;" onclick="openModal('getDelayServiceModel', '打开获取延期事项数据窗口')" class="secondary">获取延期事项</button>
+        <button data-function="get_warning_service" style="display: none;" onclick="submitOperation('get_warning_service')" class="secondary">获取预警事项</button>
+        <button data-function="get_overdue_service" style="display: none;" onclick="openModal('getOverdueServiceModel', '打开获取逾期事项数据窗口')" class="secondary">获取逾期事项</button>
+    </div>
+
+    <div class="input-group" data-group>
+        <h3>月初执行一轮</h3>
+        <div><span style="color: red; font-size: 15px">注意：标有“月初执行”的功能，越晚执行，越容易出现数据偏差。比如月底搁置的，可能月初2号就重启，又比如获取月新增事项的，可能月初2号就作废，等等</span></div>
+        <div id="loadingPlaceholder_4" style="color: #999; font-size: 13px;">正在加载功能列表...</div>
+        <button data-function="get_shelve_case_register_service" style="display: none;" onclick="submitOperation('get_shelve_case_register_service')" class="secondary">月初执行-搁置事项数（依据立案模块搁置数据）</button>
+        <button data-function="get_submit_case_register_service" style="display: none;" onclick="openModal('getSubmitCaseRegisterServiceModel', '打开获取走到立案节点数据窗口')" class="secondary">月初执行-走到立案节点的数据</button>
+        <button data-function="get_server_month_add_service" style="display: none;" onclick="openModal('getMonthServerAddServiceModel', '打开获取服务顾问月度新增事项数据窗口')" class="secondary">月初执行-服务顾问月度新增事项</button>
+    </div>
+
+    <div class="input-group">
+        <h3>操作日志:</h3>
+        <div id="log" class="log"></div>
+    </div>
+</div>
+
+<!-- 月初执行-服务顾问月度新增事项 -->
+<div id="getMonthServerAddServiceModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getMonthServerAddServiceModel')">&times;</span>
+        <h2>服务顾问月度新增事项</h2>
+        <form id="getMonthServerAddServiceForm">
+            <div class="form-group">
+                <label for="monthRange">月度区间，月初1号至月末最后一日:</label>
+                <input id="monthRange" type="text" value="202Y-MM-DD~202Y-MM-DD" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getMonthServerAddServiceModel')">取消</button>
+                <button type="button" onclick="submitOperation('get_server_month_add_service')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 月初执行-走到立案节点的数据 -->
+<div id="getSubmitCaseRegisterServiceModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getSubmitCaseRegisterServiceModel')">&times;</span>
+        <h2>走到立案节点的数据</h2>
+        <form id="getSubmitCaseRegisterServiceForm">
+            <div class="form-group">
+                <label for="assignDate">截止日 + 1天（即填月初第一天）:</label>
+                <input id="assignDate" type="text" value="202Y-MM-DD" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getSubmitCaseRegisterServiceModel')">取消</button>
+                <button type="button" onclick="submitOperation('get_submit_case_register_service')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 获取逾期事项 -->
+<div id="getOverdueServiceModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getOverdueServiceModel')">&times;</span>
+        <h2>获取逾期事项数据</h2>
+        <form id="getOverdueServiceForm">
+            <div class="form-group">
+                <label for="overdueDate">获取几天前的数据（即当天减几天）:</label>
+                <input id="overdueDate" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getOverdueServiceModel')">取消</button>
+                <button type="button" onclick="submitOperation('get_overdue_service')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 获取预警事项 -->
+<div id="getWarningServiceModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getWarningServiceModel')">&times;</span>
+        <h2>获取预警事项数据</h2>
+        <form id="getWarningServiceForm">
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getWarningServiceModel')">取消</button>
+                <button type="button" onclick="submitOperation('get_warning_service')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 获取延期事项 -->
+<div id="getDelayServiceModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getDelayServiceModel')">&times;</span>
+        <h2>获取暂停事项数据</h2>
+        <form id="getDelayServiceForm">
+            <div class="form-group">
+                <label for="delayDate">获取几天前的数据（即当天减几天）:</label>
+                <input id="delayDate" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getDelayServiceModel')">取消</button>
+                <button type="button" onclick="submitOperation('get_delay_service')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 获取暂停事项 -->
+<div id="getPauseServiceModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getPauseServiceModel')">&times;</span>
+        <h2>获取暂停事项数据</h2>
+        <form id="getPauseServiceForm">
+            <div class="form-group">
+                <label for="pauseDate">获取几天前的数据（即当天减几天）:</label>
+                <input id="pauseDate" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getPauseServiceModel')">取消</button>
+                <button type="button" onclick="submitOperation('get_pause_service')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 回退交付状态 -->
+<div id="rollbackStatusModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('rollbackStatusModel')">&times;</span>
+        <h2>回退交付状态<span style="font-size: 15px; color: red">（完结事项回退完成后请手动回调次数）</span></h2>
+        <form id="rollbackStatusForm">
+            <div class="form-group">
+                <label for="serviceId">事项ID:</label>
+                <input id="serviceId" type="text" value="可前往待交付/已交付列表查看" required>
+            </div>
+            <div class="form-group">
+                <label>是否完结:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" value="notEnd" name="isEnd" checked/> 未完结
+                    </label>
+                    <label>
+                        <input type="radio" value="end" name="isEnd"/> 已完结
+                    </label>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('rollbackStatusModel')">取消</button>
+                <button type="button" onclick="submitOperation('rollback_status')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 系统用户列表 -->
+<div id="sysUserModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('sysUserModel')">&times;</span>
+        <h2>系统用户列表<button onclick="openAddSysUserModal('addSysUserModal', '新增系统用户')" class="secondary">新增系统用户</button></h2>
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="sysUserSearch" placeholder="搜索用户名或昵称..."
+                   style="padding: 8px; width: 100%; border: 1px solid #ddd; border-radius: 4px;"
+                   onkeyup="filterSysUserList()"/>
+        </div>
+        <div id="sysUserList" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">
+        </div>
+        <div class="modal-buttons">
+            <button type="button" onclick="closeModal('sysUserModel')">关闭</button>
+        </div>
+    </div>
+</div>
+<div id="addSysUserModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; max-height: 600px">
+        <span class="close" onclick="closeModal('addSysUserModal')">&times;</span>
+        <h2>新增系统账号</h2>
+
+        <form id="addSysUserForm">
+            <div class="form-group">
+                <label for="sysUserName">登陆账号:</label>
+                <input id="sysUserName" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="password">登陆密码:</label>
+                <input id="password" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="sysNickName">账号名称:</label>
+                <input id="sysNickName" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="roleCheckboxList">角色:</label>
+                <div id="roleCheckboxList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 8px; border-radius: 4px; background: #fafafa;">
+                    <!-- 动态渲染 -->
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('addSysUserModal')">取消</button>
+                <button type="button" onclick="submitOperation('add_sys_user')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="updateSysUserModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; max-height: 600px">
+        <span class="close" onclick="closeModal('updateSysUserModal')">&times;</span>
+        <h2>修改系统账号</h2>
+
+        <form id="updateSysUserForm">
+            <div class="form-group">
+                <label for="updateSysUserId">账号ID:</label>
+                <input id="updateSysUserId" type="text" disabled required>
+            </div>
+            <div class="form-group">
+                <label for="updateSysUserName">登陆账号:</label>
+                <input id="updateSysUserName" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="updatePassword">登陆密码:</label>
+                <input id="updatePassword" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="updateSysNickName">账号名称:</label>
+                <input id="updateSysNickName" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="updateRoleCheckboxList">角色:</label>
+                <div id="updateRoleCheckboxList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 8px; border-radius: 4px; background: #fafafa;">
+                    <!-- 动态渲染 -->
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('updateSysUserModal')">取消</button>
+                <button type="button" onclick="submitOperation('update_sys_user')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 函数列表 -->
+<div id="functionModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('functionModel')">&times;</span>
+        <h2>函数列表<button onclick="openModal('addFunctionModal', '新增函数')" class="secondary">新增函数</button></h2>
+        <div id="functionList" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">
+        </div>
+        <div class="modal-buttons">
+            <button type="button" onclick="closeModal('functionModel')">关闭</button>
+        </div>
+    </div>
+</div>
+<div id="addFunctionModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; max-height: 600px">
+        <span class="close" onclick="closeModal('addFunctionModal')">&times;</span>
+        <h2>新增函数</h2>
+
+        <form id="addFunctionForm">
+            <div class="form-group">
+                <label for="functionName">函数名称:</label>
+                <input id="functionName" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="functionKey">函数接口key:</label>
+                <input id="functionKey" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="functionButton">子函数Keys:</label>
+                <input id="functionButton" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('addFunctionModal')">取消</button>
+                <button type="button" onclick="submitOperation('add_function')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="updateFunctionModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; max-height: 600px">
+        <span class="close" onclick="closeModal('updateFunctionModal')">&times;</span>
+        <h2>修改函数</h2>
+
+        <form id="updateFunctionForm">
+            <div class="form-group">
+                <label for="updateFunctionId">函数ID:</label>
+                <input id="updateFunctionId" type="text" disabled required>
+            </div>
+            <div class="form-group">
+                <label for="updateFunctionName">角色名称:</label>
+                <input id="updateFunctionName" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="updateFunctionKey">函数接口key:</label>
+                <input id="updateFunctionKey" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="updateFunctionButton">子函数Keys:</label>
+                <input id="updateFunctionButton" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('updateFunctionModal')">取消</button>
+                <button type="button" onclick="submitOperation('update_function')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 角色列表 -->
+<div id="roleModel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('roleModel')">&times;</span>
+        <h2>角色列表<button onclick="openAddRoleModal('addRoleModal', '新增角色')" class="secondary">新增角色</button></h2>
+        <div id="roleList" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">
+        </div>
+        <div class="modal-buttons">
+            <button type="button" onclick="closeModal('roleModel')">关闭</button>
+        </div>
+    </div>
+</div>
+<div id="addRoleModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; max-height: 600px">
+        <span class="close" onclick="closeModal('addRoleModal')">&times;</span>
+        <h2>新增角色</h2>
+
+        <form id="addRoleForm">
+            <div class="form-group">
+                <label for="roleName">角色名称:</label>
+                <input id="roleName" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="remark">备注:</label>
+                <input id="remark" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="functionCheckboxList">启用函数接口:</label>
+                <div id="functionCheckboxList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 8px; border-radius: 4px; background: #fafafa;">
+                    <!-- 动态渲染 -->
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('addRoleModal')">取消</button>
+                <button type="button" onclick="submitOperation('add_role')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="updateRoleModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; max-height: 800px">
+        <span class="close" onclick="closeModal('updateRoleModal')">&times;</span>
+        <h2>修改角色</h2>
+
+        <form id="updateRoleForm">
+            <div class="form-group">
+                <label for="updateRoleId">角色ID:</label>
+                <input id="updateRoleId" type="text" disabled required>
+            </div>
+            <div class="form-group">
+                <label for="roleName">角色名称:</label>
+                <input id="updateRoleName" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="remark">备注:</label>
+                <input id="updateRemark" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="updateFunctionCheckboxList">启用函数接口:</label>
+                <div id="updateFunctionCheckboxList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 8px; border-radius: 4px; background: #fafafa;">
+                    <!-- 动态渲染 -->
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('updateRoleModal')">取消</button>
+                <button type="button" onclick="submitOperation('update_role')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--获取顾问交付数据-->
+<div id="getDeliveryUrlData" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getDeliveryUrlData')">&times;</span>
+        <h2>获取顾问交付数据</h2>
+
+        <form id="getDeliveryUrlDataForm">
+            <div class="form-group">
+                <label for="deliveryLaw">法律顾问集(字符串，逗号拼接):</label>
+                <input id="deliveryLaw" type="text" value="韦忻彤,缪佳慧,潘春钦,赵丽颖,李沁珏,张海伦,陆玉嫦,盘俏芸,阮莹,柳明智,黄舒怡,陆增智,黄海燕,朱雁,梁甜甜,李杰,陈亮昌,梁雨婷,磨薪宇,霍海桂,韦胤杰,陆嘉欣,覃礼明,韦宇益,王宏铖,袁康轩" required>
+            </div>
+            <div class="form-group">
+                <label for="deliveryTimeSection">交付时间区间:<div><span style="color: red">（yyyy-mm-dd格式，使用~或～拼接）</span></div></label>
+                <input id="deliveryTimeSection" type="text" value="2026-mm-dd~2026-mm-dd" required>
+            </div>
+            <div class="form-group">
+                <label for="deliveryType">交付事项类型:</label>
+                <input id="deliveryType" type="text" value="代写诉讼文书" required>
+            </div>
+            <div class="form-group">
+                <label>导出级别:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" value="new" name="level" checked/> 最新
+                    </label>
+                    <label>
+                        <input type="radio" value="all" name="level"/> 全部
+                    </label>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getDeliveryUrlData')">取消</button>
+                <button type="button" onclick="submitOperation('submit_get_delivery_url_data')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--获取两岗顾问在期/过期数据-->
+<div id="getTowJobDuringAndOutCustomerData" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getTowJobDuringAndOutCustomerData')">&times;</span>
+        <h2>获取两岗顾问在期/过期客户数据(广西)</h2>
+
+        <form id="getTowJobDuringAndOutCustomerDataForm">
+            <div class="form-group">
+                <label for="towJobLaw">法律顾问集(字符串，逗号拼接):</label>
+                <input id="towJobLaw" type="text" value="韦忻彤,缪佳慧,潘春钦,赵丽颖,李沁珏,张海伦,陆玉嫦,盘俏芸,阮莹,柳明智,黄舒怡,陆增智,黄海燕,朱雁,梁甜甜,李杰,陈亮昌,梁雨婷,磨薪宇,霍海桂,韦胤杰,陆嘉欣,覃礼明,韦宇益,王宏铖,袁康轩" required>
+            </div>
+            <div class="form-group">
+                <label for="twoJobServer">服务顾问集(字符串，逗号拼接):</label>
+                <input id="twoJobServer" type="text" value="罗焕仙,蒋俊杰,李彩璎,兰春双,黄淋炳,罗露,冯小贞,潘茜茜,詹军兰,何玲喜,蒙健" required>
+            </div>
+            <div class="form-group">
+                <label for="towJobDataSource">数据源文件名称:</label>
+                <input id="towJobDataSource" type="text" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="twoJobDeadlineDuring">截止时间(获取在期用):<div><span style="color: red">（根据这个时间 <= 判断，所以周数据应当选择周日那一天）</span></div></label>
+                <input id="twoJobDeadlineDuring" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="twoJobDeadlineOut">时间区间(获取过期用):<span style="color: red">（即完整周）</span></label>
+                <input id="twoJobDeadlineOut" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getTowJobDuringAndOutCustomerData')">取消</button>
+                <button type="button" onclick="submitOperation('submit_get_two_job_during_and_out_customer_data')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--获取当前分公司在期客户数据-->
+<div id="getSalesmanCompanyDuringData" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getSalesmanCompanyDuringData')">&times;</span>
+        <h2>获取当前分公司在期客户数据</h2>
+
+        <form id="getSalesmanCompanyDuringDataForm">
+            <div class="form-group">
+                <label for="fileSource">数据源文件名称:</label>
+                <input id="fileSource" type="text" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="endTimeSal">截止时间:<span style="color: red">（不填则默认当天）</span></label>
+                <input id="endTimeSal" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getSalesmanCompanyDuringData')">取消</button>
+                <button type="button" onclick="submitOperation('submit_get_salesman_company_during_data')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--获取服务顾问过期数据-->
+<div id="getServerOutDateData" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getServerOutDateData')">&times;</span>
+        <h2>获取服务顾问过期数据</h2>
+
+        <form id="getServerOutDateDataForm">
+            <div class="form-group">
+                <label for="serverStr_out">服务顾问集(字符串，逗号拼接):</label>
+                <input id="serverStr_out" type="text" value="罗焕仙，蒋俊杰，李彩璎，兰春双，黄淋炳，罗露，冯小贞，潘茜茜，詹军兰，何玲喜，蒙健" required>
+            </div>
+            <div class="form-group">
+                <label for="sourceDataFileNameServer_out">数据源文件名称:</label>
+                <input id="sourceDataFileNameServer_out" type="text" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="deadlineServer_out">时间区间:<span style="color: red">（即完整周）</span></label>
+                <input id="deadlineServer_out" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getServerOutDateData')">取消</button>
+                <button type="button" onclick="submitOperation('submit_get_server_out_date_data')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--获取法律顾问过期数据-->
+<div id="getLawOutDateData" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getLawOutDateData')">&times;</span>
+        <h2>获取法律顾问过期数据</h2>
+
+        <form id="getLawOutDateDataForm">
+            <div class="form-group">
+                <label for="lawStr_out">法律顾问集(字符串，逗号拼接):</label>
+                <input id="lawStr_out" type="text" value="缪佳慧，覃礼明，阮莹，磨薪宇，李杰，陈亮昌，梁雨婷，袁康轩，韦胤杰，霍海桂，朱雁，陆增智，潘春钦，李沁珏，黄海燕，柳明智，陆玉嫦，梁甜甜，黄舒怡，赵丽颖，张海伦，陆嘉欣，韦宇益，王宏铖，盘俏芸" required>
+            </div>
+            <div class="form-group">
+                <label for="sourceDataFileNameLaw_out">数据源文件名称:</label>
+                <input id="sourceDataFileNameLaw_out" type="text" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="deadlineLaw_out">时间区间:<span style="color: red">（即完整周）</span></label>
+                <input id="deadlineLaw_out" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getLawOutDateData')">取消</button>
+                <button type="button" onclick="submitOperation('submit_get_law_out_date_data')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--获取法律顾问在期数据-->
+<div id="getLawDuringData" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getLawDuringData')">&times;</span>
+        <h2>获取法律顾问在期数据</h2>
+
+        <form id="getLawDuringDataForm">
+            <div class="form-group">
+                <label for="lawStr">法律顾问集(字符串，逗号拼接):</label>
+                <input id="lawStr" type="text" value="缪佳慧，覃礼明，阮莹，磨薪宇，李杰，陈亮昌，梁雨婷，袁康轩，韦胤杰，霍海桂，朱雁，陆增智，潘春钦，李沁珏，黄海燕，柳明智，陆玉嫦，梁甜甜，黄舒怡，赵丽颖，张海伦，陆嘉欣，韦宇益，王宏铖，盘俏芸" required>
+            </div>
+            <div class="form-group">
+                <label for="sourceDataFileNameLaw">数据源文件名称:</label>
+                <input id="sourceDataFileNameLaw" type="text" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="deadlineLaw">截止时间:<div><span style="color: red">（根据这个时间 <= 判断，所以周数据应当选择周日那一天）</span></div></label>
+                <input id="deadlineLaw" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getLawDuringData')">取消</button>
+                <button type="button" onclick="submitOperation('submit_get_law_during_data')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--获取服务顾问在期数据-->
+<div id="getServerDuringData" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getServerDuringData')">&times;</span>
+        <h2>获取服务顾问在期数据</h2>
+
+        <form id="getServerDuringDataForm">
+            <div class="form-group">
+                <label for="serverStr">服务顾问集(字符串，逗号拼接):</label>
+                <input id="serverStr" type="text" value="罗焕仙，蒋俊杰，李彩璎，兰春双，黄淋炳，罗露，冯小贞，潘茜茜，詹军兰，何玲喜，蒙健" required>
+            </div>
+            <div class="form-group">
+                <label for="sourceDataFileNameServer">数据源文件名称:</label>
+                <input id="sourceDataFileNameServer" type="text" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="deadline">截止时间:<div><span style="color: red">（根据这个时间 <= 判断，所以周数据应当选择周日那一天）</span></div></label>
+                <input id="deadline" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getServerDuringData')">取消</button>
+                <button type="button" onclick="submitOperation('submit_get_server_during_data')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 获取指定管家及其服务岗在期数据(new) -->
+<div id="getStewardServerDuringDataToExcelNew" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getStewardServerDuringDataToExcelNew')">&times;</span>
+        <h2>获取指定管家及其服务岗在期数据（new）</h2>
+
+        <form id="getStewardServerDuringDataToExcelFormNew">
+            <div class="form-group">
+                <label for="stewardOrServerStrNew">管家集(字符串，逗号拼接):</label>
+                <input id="stewardOrServerStrNew" type="text" value="黎秋娟，玉金娇，谢凛妹，黄莹1，张杏花，张严凤，梁静梅，苏奕丹，梁锐，王政，潘惠琼，何亿亿，梁月红，胡潇锋，韦晓艳" required>
+            </div>
+            <div class="form-group">
+                <label for="sourceDataFileNameNew">数据源文件名称:</label>
+                <input id="sourceDataFileNameNew" type="text" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="stewardEndTimeNew">截止时间（获取结束时间大于等于这个时间的数据）:</label>
+                <input id="stewardEndTimeNew" type="text" value="yyyy-MM-dd格式" required>
+            </div>
+            <div class="form-group">
+                <label for="stewardIntervalEndTimeNew">周区间（周一到周日）:</label>
+                <input id="stewardIntervalEndTimeNew" type="text" value="yyyy-MM-dd~yyyy-MM-dd" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getStewardServerDuringDataToExcelNew')">取消</button>
+                <button type="button" onclick="submitOperation('get_steward_server_during_data_to_excel_new')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 获取指定管家及其服务岗在期数据 -->
+<div id="getStewardServerDuringDataToExcel" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getStewardServerDuringDataToExcel')">&times;</span>
+        <h2>获取指定管家及其服务岗在期数据</h2>
+
+        <form id="getStewardServerDuringDataToExcelForm">
+            <div class="form-group">
+                <label for="stewardOrServerStr">管家集(字符串，逗号拼接):</label>
+                <input id="stewardOrServerStr" type="text" value="黎秋娟，玉金娇，谢凛妹，黄莹1，张杏花，张严凤，梁静梅" required>
+            </div>
+            <div class="form-group">
+                <label for="sourceDataFileName">数据源文件名称:</label>
+                <input id="sourceDataFileName" type="text" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="stewardEndTime">截止时间（获取结束时间小于这个时间的数据）:</label>
+                <input id="stewardEndTime" type="text" value="yyyy-MM-dd格式" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getStewardServerDuringDataToExcel')">取消</button>
+                <button type="button" onclick="submitOperation('get_steward_server_during_data_to_excel')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 同步客户数据弹出窗 -->
+<div id="syncModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('syncModal')">&times;</span>
+        <h2>更新线下客户表</h2>
+        <div><span style="font-size: 15px; color: red;padding-bottom: 20px">(请确定数据源表.xlsx是否已经根据客户ID正序排序)</span></div>
+        <form id="syncForm">
+            <div class="form-group">
+                <label for="oldFileName">旧逻辑文件名称:</label>
+                <input id="oldFileName" type="text" value="yyyyMMdd系统线下客户表（旧逻辑）" required>
+            </div>
+            <div class="form-group">
+                <label for="newFileName">新逻辑文件名称:</label>
+                <input type="text" id="newFileName" value="yyyyMMdd系统线下客户表（新逻辑）" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('syncModal')">取消</button>
+                <button type="button" onclick="submitOperation('sync_data_info')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 批量导入客户 -->
+<div id="batchInsertModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('batchInsertModal')">&times;</span>
+        <h2>批量导入客户表<button onclick="openUserListModal()" class="secondary">顾问列表</button></h2>
+
+        <form id="batchInsertForm">
+            <div class="form-group">
+                <label for="lawers">法律顾问:</label>
+                <input id="lawers" type="text" disabled required>
+            </div>
+            <div class="form-group">
+                <label for="server">服务顾问:</label>
+                <input id="server" type="text" disabled required>
+            </div>
+            <div class="form-group">
+                <label for="salesmanCompany">分公司名称:</label>
+                <input id="salesmanCompany" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="fileName">文件名称:</label>
+                <input id="fileName" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('batchInsertModal')">取消</button>
+                <button type="button" onclick="submitOperation('batch_insert')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="userListModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; max-height: 600px">
+        <span class="close" onclick="closeModal('userListModal')">&times;</span>
+        <h2>顾问列表 <span style="font-size: 14px; color: #666;">(共 <span id="userCount">0</span> 人)</span></h2>
+
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="userSearch" placeholder="搜索用户名或昵称..."
+                   style="padding: 8px; width: 100%; border: 1px solid #ddd; border-radius: 4px;"
+                   onkeyup="filterUserList()"/>
+        </div>
+        <div style="margin-top: 10px">
+            <label id="selectLaw" style="font-size: 15px;">法律顾问：</label>
+        </div>
+        <div style="margin-top: 10px">
+            <label id="selectServer" style="font-size: 15px;">服务顾问：</label>
+        </div>
+
+        <div id="userList" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">
+        </div>
+
+        <div class="modal-buttons" style="margin-top: 15px;">
+            <button type="button" onclick="closeModal('userListModal')">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 批量导入退款客户 -->
+<div id="batchInsertRefundModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('batchInsertRefundModal')">&times;</span>
+        <h2>批量导入退款客户表<button onclick="alert('收到了你的申请、请求、投诉、举报等，但是我不处理，你能咋滴，咬我啊')" class="secondary">已有数据列表</button></h2>
+
+        <form id="batchInsertRefoundForm">
+            <div class="form-group">
+                <label for="refoundFileName">文件名称:</label>
+                <input id="refoundFileName" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('batchInsertRefundModal')">取消</button>
+                <button type="button" onclick="submitOperation('batch_insert_refound')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 批量导入调解升级客户 -->
+<div id="batchInsertMediateUpgradeModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('batchInsertMediateUpgradeModal')">&times;</span>
+        <h2>批量导入调解升级客户表<button onclick="alert('收到了你的申请、请求、投诉、举报等，但是我不处理，你能咋滴，咬我啊')" class="secondary">已有数据列表</button></h2>
+
+        <form id="batchInsertMediateUpgradeForm">
+            <div class="form-group">
+                <label for="mediateUpgradeFileName">文件名称:</label>
+                <input id="mediateUpgradeFileName" type="text" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('batchInsertMediateUpgradeModal')">取消</button>
+                <button type="button" onclick="submitOperation('batch_insert_mediate_upgrade')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 获取分公司交付数据 -->
+<div id="getDeliveryModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getDeliveryModal')">&times;</span>
+        <h2>获取分公司交付数据</h2>
+        <form id="getDeliveryForm">
+            <div class="form-group">
+                <label for="startTime">起始时间:</label>
+                <input id="startTime" type="date" required>
+            </div>
+            <div class="form-group">
+                <label for="endTime">结束时间:</label>
+                <input id="endTime" type="date" required>
+            </div>
+            <div class="form-group">
+                <label for="selectType">年度范围:
+                    <select id="selectType">
+                        <option value="year">年度</option>
+                        <option value="month">月度</option>
+                    </select>
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getDeliveryModal')">取消</button>
+                <button type="button" onclick="submitOperation('get_salesman_delivery')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 获取未分配管家的客户数据 -->
+<div id="getNotStewardModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('getNotStewardModal')">&times;</span>
+        <h2>获取未分配管家的客户数据</h2>
+        <form id="getNotStewardForm">
+            <div class="form-group">
+                <label for="notStartTime">起始时间:</label>
+                <input id="notStartTime" type="date" required>
+            </div>
+            <div class="form-group">
+                <label for="notEndTime">结束时间:</label>
+                <input id="notEndTime" type="date" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('getNotStewardModal')">取消</button>
+                <button type="button" onclick="submitOperation('get_not_steward_list')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 未分配列表 -->
+<div id="notStewardModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; max-height: 600px">
+        <span class="close" onclick="closeModal('notStewardModal')">&times;</span>
+        <h2>未分配列表 <span style="font-size: 14px; color: #666;">(共 <span id="notStewardCount">0</span> 人)</span></h2>
+
+        <div id="notStewardList" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">
+        </div>
+    </div>
+</div>
+
+<!-- 批量审批延期 -->
+<div id="batchAuditPostpone" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('batchAuditPostpone')">&times;</span>
+        <h2>待审批列表<span style="font-size: 14px; color: #666;">(共 <span id="awaitAuditPostponeListCount">0</span> 条，已选择<span id="changeAwaitAuditCount">0</span>条)</span>
+            <div>
+                <button onclick="getAwaitAuditPostponeList()" class="secondary">获取</button>
+                <button onclick="changeAllAwaitAudit()" class="secondary">全选</button>
+                <button onclick="cancelAllAwaitAudit()" class="secondary">取消全选</button>
+            </div>
+        </h2>
+        <form id="">
+            <div id="awaitAuditPostponeList" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal('batchAuditPostpone')">取消</button>
+                <button type="button" onclick="openModal('certifiedFinal', '打开选择审批状态窗口')" class="secondary">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="certifiedFinal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('certifiedFinal')">&times;</span>
+        <div class="radio-group">
+            审核意见：
+            <label class="radio-label">
+                <input type="radio" name="language" value="OK" style="width: 5%" checked>
+                <span class="radio-text">同意</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="language" value="NO" style="width: 5%">
+                <span class="radio-text">驳回</span>
+            </label>
+        </div>
+        <div class="modal-buttons">
+            <button type="button" onclick="closeModal('certifiedFinal')">取消</button>
+            <button type="button" onclick="submitBatchAuditPostpone()" class="secondary">提交</button>
+        </div>
+    </div>
+</div>
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+<script>
+    var bridge = null;
+    var logElement = document.getElementById('log');
+
+    // ==================== WebChannel 初始化 ====================
+    function initWebChannel() {
+        try {
+            new QWebChannel(qt.webChannelTransport, function(channel) {
+                bridge = channel.objects.bridge;
+                log('WebChannel初始化成功，桥接对象已就绪', 'success');
+                if (bridge.jsMessageResponse) {
+                    bridge.jsMessageResponse.connect(function(response) {
+                        try {
+                            const data = JSON.parse(response);
+                            handleBackendResponse(data);
+                        } catch (e) {
+                            console.error('解析响应失败:', e);
+                            alert('响应解析失败: ' + e.message);
+                        }
+                    });
+                    log('已连接响应信号', 'success');
+                    // 请求当前用户的功能列表
+                    bridge.handle_js_message(JSON.stringify({ type: "get_my_functions" }));
+
+                } else {
+                    log('未找到jsMessageResponse信号', 'error');
+                }
+            });
+        } catch (error) {
+            log('WebChannel初始化失败: ' + error, 'error');
+        }
+    }
+
+    function applyPermissions(functionKeys) {
+        let funKeys = []
+        functionKeys.forEach(funKey => {
+            funKeys.push(funKey.function_key)
+        })
+
+        const allowed = new Set(funKeys);
+        document.querySelectorAll("[data-function]").forEach(btn => {
+            btn.style.display = allowed.has(btn.dataset.function) ? "inline-block" : "none";
+        });
+        // 移除加载态
+        for(let index = 0; index < 10; index ++){
+            const placeholder = document.getElementById("loadingPlaceholder_" + index);
+            if (placeholder) placeholder.remove();
+        }
+
+        // 隐藏没有可见按钮的板块
+        document.querySelectorAll("[data-group]").forEach(group => {
+            const visibleButtons = group.querySelectorAll('button:not([style*="display: none"])');
+            group.style.display = visibleButtons.length > 0 ? "block" : "none";
+        });
+
+    }
+
+    // ==================== 全局状态 ====================
+    let allUsers = [];
+    let filteredUsers = [];
+    let allNotStewardList = [];
+    let awaitAuditPostponeList = [];
+    let selectLawList = {};
+    let selectServerList = {};
+    let changeAwaitAuditDist = {};
+    let allRoles = [];
+    let filteredRoles = [];
+    let pendingRoleFunctionIds = [];
+    let allFunctions = [];
+    let filteredFunctions = [];
+    let allSysUsers = [];
+    let filteredSysUsers = [];
+    let pendingSysUserRoleIds = []
+
+    // ==================== 提交配置表 ====================
+    const SUBMIT_CONFIG = {
+        get_server_month_add_service: {
+            label: '获取服务顾问月度新增事项数据',
+            fields: [
+                { key: 'monthRange', dom: 'monthRange' }
+            ],
+            required: ['monthRange'],
+            closeModel: "getMonthServerAddServiceModel",
+            closeForm: "getMonthServerAddServiceForm"
+        },
+        get_submit_case_register_service: {
+            label: '获取走到立案节点数据',
+            fields: [
+                { key: 'assignDate', dom: 'assignDate' }
+            ],
+            required: ['assignDate'],
+            closeModel: "getSubmitCaseRegisterServiceModel",
+            closeForm: "getSubmitCaseRegisterServiceForm"
+        },
+        get_shelve_case_register_service: {
+            label: '获取搁置事项（依据立案模块搁置数据）数据',
+            fields: [],
+            required: []
+        },
+        get_overdue_service:{
+            label: '获取逾期事项数据',
+            fields: [
+                { key: 'overdueDate', dom: 'overdueDate' }
+            ],
+            required: ['overdueDate'],
+            closeModel: "getOverdueServiceModel",
+            closeForm: "getOverdueServiceForm"
+        },
+        get_warning_service:{
+            label: '获取预警事项数据',
+            fields: [
+
+            ],
+            required: [],
+            closeModel: "getWarningServiceModel",
+        },
+        get_delay_service:{
+            label: '获取延期事项数据',
+            fields: [
+                { key: 'delayDate', dom: 'delayDate' }
+            ],
+            required: ['delayDate'],
+            closeModel: "getDelayServiceModel",
+            closeForm: "getDelayServiceForm"
+        },
+        get_pause_service:{
+            label: '获取暂停事项数据',
+            fields: [
+                { key: 'pauseDate', dom: 'pauseDate' }
+            ],
+            required: ['pauseDate'],
+            closeModel: "getPauseServiceModel",
+            closeForm: "getPauseServiceForm"
+        },
+        rollback_status:{
+            label: '回退交付状态',
+            fields: [
+                { key: 'serviceId', dom: 'serviceId' }
+            ],
+            required: ['serviceId'],
+            extra: () => ({
+                isEnd: document.querySelector('input[name="isEnd"]:checked').value
+            }),
+            closeModel: "rollbackStatusModel",
+            closeForm: "rollbackStatusForm"
+        },
+        update_sys_user: {
+            label: '修改系统用户',
+            fields: [
+                { key: 'updateSysUserId', dom: 'updateSysUserId' },
+                { key: 'updateSysUserName', dom: 'updateSysUserName' },
+                { key: 'updatePassword', dom: 'updatePassword' },
+                { key: 'updateSysNickName', dom: 'updateSysNickName' }
+            ],
+            required: ['updateSysUserName', "updatePassword", "updateSysNickName"],
+            extra: () => ({
+                roleIds: Array.from(
+                    document.querySelectorAll('#updateRoleCheckboxList input[name="updateSysUserRoleIds"]:checked')
+                ).map(cb => parseInt(cb.value))
+            }),
+            validate: () => {
+                const ids = document.querySelectorAll('#updateRoleCheckboxList input[name="updateSysUserRoleIds"]:checked');
+                if (ids.length === 0) {
+                    alert('请至少选择一个功能接口');
+                    return false;
+                }
+                return true;
+            },
+            closeModel: "updateSysUserModal",
+            closeForm: "updateSysUserForm",
+            callBackFun: "get_sys_user_list"
+        },
+        add_sys_user: {
+            label: '新增系统用户',
+            fields: [
+                { key: 'sysUserName', dom: 'sysUserName' },
+                { key: 'password', dom: 'password' },
+                { key: 'sysNickName', dom: 'sysNickName' }
+            ],
+            required: ['sysUserName', "password", "sysNickName"],
+            extra: () => ({
+                roleIds: Array.from(
+                    document.querySelectorAll('#roleCheckboxList input[name="sysUserRoleIds"]:checked')
+                ).map(cb => parseInt(cb.value))
+            }),
+            validate: () => {
+                const ids = document.querySelectorAll('#roleCheckboxList input[name="sysUserRoleIds"]:checked');
+                if (ids.length === 0) {
+                    alert('请至少选择一个功能接口');
+                    return false;
+                }
+                return true;
+            },
+            closeModel: "addSysUserModal",
+            closeForm: "addSysUserForm",
+            callBackFun: "get_sys_user_list"
+        },
+        update_function: {
+            label: '修改函数',
+            fields: [
+                { key: 'updateFunctionId', dom: 'updateFunctionId' },
+                { key: 'updateFunctionName', dom: 'updateFunctionName' },
+                { key: 'updateFunctionKey', dom: 'updateFunctionKey' },
+                { key: 'updateFunctionButton', dom: 'updateFunctionButton' }
+            ],
+            required: ['updateFunctionName', "updateFunctionKey"],
+            closeModel: "updateFunctionModal",
+            closeForm: "updateFunctionForm",
+            callBackFun: "get_fun_list"
+        },
+        add_function: {
+            label: '新增函数',
+            fields: [
+                { key: 'functionName', dom: 'functionName' },
+                { key: 'functionKey', dom: 'functionKey' },
+                { key: 'functionButton', dom: 'functionButton' }
+            ],
+            required: ['functionName', "functionKey"],
+            closeModel: "addFunctionModal",
+            closeForm: "addFunctionForm",
+            callBackFun: "get_fun_list"
+        },
+        update_role: {
+            label: '修改角色',
+            fields: [
+                { key: 'updateRoleId', dom: 'updateRoleId' },
+                { key: 'updateRoleName', dom: 'updateRoleName' },
+                { key: 'updateRemark', dom: 'updateRemark' }
+            ],
+            required: ['updateRoleName', "updateRemark"],
+            extra: () => ({
+                functionIds: Array.from(
+                    document.querySelectorAll('#updateFunctionCheckboxList input[name="updateFunctionIds"]:checked')
+                ).map(cb => parseInt(cb.value))
+            }),
+            validate: () => {
+                const ids = document.querySelectorAll('#updateFunctionCheckboxList input[name="updateFunctionIds"]:checked');
+                if (ids.length === 0) {
+                    alert('请至少选择一个功能接口');
+                    return false;
+                }
+                return true;
+            },
+            closeModel: "updateRoleModal",
+            closeForm: "updateRoleForm",
+            callBackFun: "get_role_list"
+        },
+        add_role: {
+            label: '新增角色',
+            fields: [
+                { key: 'roleName', dom: 'roleName' },
+                { key: 'remark', dom: 'remark' }
+            ],
+            required: ['roleName', "remark"],
+            extra: () => ({
+                functionIds: Array.from(
+                    document.querySelectorAll('#functionCheckboxList input[name="functionIds"]:checked')
+                ).map(cb => parseInt(cb.value))
+            }),
+            validate: () => {
+                const ids = document.querySelectorAll('#functionCheckboxList input[name="functionIds"]:checked');
+                if (ids.length === 0) {
+                    alert('请至少选择一个功能接口');
+                    return false;
+                }
+                return true;
+            },
+            closeModel: "addRoleModal",
+            closeForm: "addRoleForm",
+            callBackFun: "get_role_list"
+        },
+        sync_data_info: {
+            label: '同步线下客户表',
+            fields: [
+                { key: 'oldFileName', dom: 'oldFileName' },
+                { key: 'newFileName', dom: 'newFileName' }
+            ],
+            required: ['oldFileName', 'newFileName'],
+            closeModel: "syncModal",
+            closeForm: "syncForm"
+        },
+        batch_insert: {
+            label: '导入外省客户',
+            fields: [
+                { key: 'fileName', dom: 'fileName' },
+                { key: 'salesmanCompany', dom: 'salesmanCompany' }
+            ],
+            required: ['fileName', 'salesmanCompany'],
+            extra: () => ({
+                law: selectLawList,
+                server: selectServerList
+            }),
+            closeModel: "batchInsertModal",
+            closeForm: "batchInsertForm"
+        },
+        get_salesman_delivery: {
+            label: '获取交付数据',
+            fields: [
+                { key: 'start_time', dom: 'startTime' },
+                { key: 'end_time', dom: 'endTime' },
+                { key: 'select_type', dom: 'selectType' }
+            ],
+            required: ['start_time', 'end_time']
+        },
+        get_not_steward_list: {
+            label: '获取未分配管家客户数据',
+            fields: [
+                { key: 'not_start_time', dom: 'notStartTime' },
+                { key: 'not_end_time', dom: 'notEndTime' }
+            ],
+            required: ['not_start_time', 'not_end_time']
+        },
+        batch_insert_refound: {
+            label: '导入退款客户数据',
+            fields: [{ key: 'refoundFileName', dom: 'refoundFileName' }],
+            required: ['refoundFileName']
+        },
+        batch_insert_mediate_upgrade: {
+            label: '导入调解升级客户数据',
+            fields: [{ key: 'mediateUpgradeFileName', dom: 'mediateUpgradeFileName' }],
+            required: ['mediateUpgradeFileName']
+        },
+        get_steward_server_during_data_to_excel_new: {
+            label: '获取指定管家及其服务岗在期数据(new)',
+            fields: [
+                { key: 'stewardOrServerStr', dom: 'stewardOrServerStrNew' },
+                { key: 'sourceDataFileName', dom: 'sourceDataFileNameNew' },
+                { key: 'stewardEndTime', dom: 'stewardEndTimeNew' },
+                { key: 'stewardIntervalEndTimeNew', dom: 'stewardIntervalEndTimeNew' }
+            ],
+            required: ['stewardOrServerStr', 'sourceDataFileName', 'stewardEndTime']
+        },
+        get_steward_server_during_data_to_excel: {
+            label: '获取指定管家及其服务岗在期数据',
+            fields: [
+                { key: 'stewardOrServerStr', dom: 'stewardOrServerStr' },
+                { key: 'sourceDataFileName', dom: 'sourceDataFileName' },
+                { key: 'stewardEndTime', dom: 'stewardEndTime' }
+            ],
+            required: ['stewardOrServerStr', 'sourceDataFileName', 'stewardEndTime']
+        },
+        submit_get_server_during_data: {
+            label: '获取服务顾问在期数据',
+            fields: [
+                { key: 'serverStr', dom: 'serverStr' },
+                { key: 'sourceDataFileNameServer', dom: 'sourceDataFileNameServer' },
+                { key: 'deadline', dom: 'deadline' }
+            ],
+            required: ['serverStr', 'sourceDataFileNameServer', 'deadline']
+        },
+        submit_get_law_during_data: {
+            label: '获取法律顾问在期数据',
+            fields: [
+                { key: 'lawStr', dom: 'lawStr' },
+                { key: 'sourceDataFileNameLaw', dom: 'sourceDataFileNameLaw' },
+                { key: 'deadlineLaw', dom: 'deadlineLaw' }
+            ],
+            required: ['lawStr', 'sourceDataFileNameLaw', 'deadlineLaw']
+        },
+        submit_get_server_out_date_data: {
+            label: '获取服务顾问过期数据',
+            fields: [
+                { key: 'serverStrOut', dom: 'serverStr_out' },
+                { key: 'sourceDataFileNameServerOut', dom: 'sourceDataFileNameServer_out' },
+                { key: 'deadlineServerOut', dom: 'deadlineServer_out' }
+            ],
+            required: ['serverStrOut', 'sourceDataFileNameServerOut', 'deadlineServerOut']
+        },
+        submit_get_law_out_date_data: {
+            label: '获取法律顾问过期数据',
+            fields: [
+                { key: 'lawStrOut', dom: 'lawStr_out' },
+                { key: 'sourceDataFileNameLawOut', dom: 'sourceDataFileNameLaw_out' },
+                { key: 'deadlineLawOut', dom: 'deadlineLaw_out' }
+            ],
+            required: ['lawStrOut', 'sourceDataFileNameLawOut', 'deadlineLawOut']
+        },
+        submit_get_salesman_company_during_data: {
+            label: '获取当前分公司在期客户数据',
+            fields: [
+                { key: 'fileSource', dom: 'fileSource' },
+                { key: 'endTimeSal', dom: 'endTimeSal' }
+            ],
+            required: ['fileSource']
+        },
+        submit_get_two_job_during_and_out_customer_data: {
+            label: '获取两岗顾问在期/过期客户数据(广西)',
+            fields: [
+                { key: 'towJobLaw', dom: 'towJobLaw' },
+                { key: 'twoJobServer', dom: 'twoJobServer' },
+                { key: 'towJobDataSource', dom: 'towJobDataSource' },
+                { key: 'twoJobDeadlineDuring', dom: 'twoJobDeadlineDuring' },
+                { key: 'twoJobDeadlineOut', dom: 'twoJobDeadlineOut' }
+            ],
+            required: ['towJobLaw', 'twoJobServer', 'towJobDataSource', 'twoJobDeadlineDuring', 'twoJobDeadlineOut']
+        },
+        submit_get_delivery_url_data: {
+            label: '获取交付连接数据',
+            fields: [
+                { key: 'deliveryLaw', dom: 'deliveryLaw' },
+                { key: 'deliveryTimeSection', dom: 'deliveryTimeSection' },
+                { key: 'deliveryType', dom: 'deliveryType' }
+            ],
+            required: ['deliveryLaw', 'deliveryTimeSection', 'deliveryType'],
+            extra: () => ({
+                level: document.querySelector('input[name="level"]:checked').value
+            })
+        },
+        submit_get_register_day_zero_data: {
+            label: '获取立案跟进天数剩余0天数据',
+            fields: [],
+            required: []
+        }
+    };
+
+    // ==================== 通用提交函数 ====================
+    function submitOperation(configKey) {
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+
+        const cfg = SUBMIT_CONFIG[configKey];
+        if (!cfg) {
+            alert('未配置的操作: ' + configKey);
+            return;
+        }
+
+        const dataInfo = { type: configKey };
+
+        for (const f of cfg.fields) {
+            const el = document.getElementById(f.dom);
+            dataInfo[f.key] = el ? el.value : '';
+        }
+
+        if (cfg.extra) {
+            Object.assign(dataInfo, cfg.extra());
+        }
+
+        for (const key of cfg.required) {
+            if (!dataInfo[key]) {
+                alert(`请填写必填项: ${key}`);
+                return;
+            }
+        }
+
+        if (cfg.validate && !cfg.validate()) {
+            return;
+        }
+
+        log(`提交${cfg.label}申请: ` + JSON.stringify(dataInfo), 'info');
+        try {
+            bridge.handle_js_message(JSON.stringify(dataInfo));
+            log(`提交${cfg.label}申请成功`, 'success');
+            if(cfg.closeModel){
+                closeModal(cfg.closeModel)
+            }
+            if(cfg.closeForm){
+                const form = document.getElementById(cfg.closeForm)
+                if (form) form.reset();
+            }
+            if(cfg.callBackFun){
+                bridge.handle_js_message(JSON.stringify({ type: cfg.callBackFun }));
+            }
+        } catch (error) {
+            log(`提交${cfg.label}申请失败: ` + error, 'error');
+        }
+    }
+
+    // ==================== 后端响应处理 ====================
+    const ALERT_ONLY_TYPES = new Set([
+        'batch_insert_customer',
+        'sync_data_info',
+        'get_salesman_delivery',
+        'batch_insert_refound',
+        'batch_insert_mediate_upgrade',
+        'get_steward_server_during_data_to_excel',
+        'submit_get_law_during_data',
+        'submit_get_server_during_data',
+        'submit_get_law_out_date_data',
+        'submit_get_server_out_date_data',
+        'submit_get_salesman_company_during_data',
+        'submit_get_two_job_during_and_out_customer_data',
+        'submit_get_delivery_url_data',
+        'submit_get_register_day_zero_data',
+        "add_role",
+        "update_role",
+        "add_function",
+        "update_function",
+        "add_sys_user",
+        "update_sys_user",
+        "rollback_status",
+        "get_pause_service",
+        "get_delay_service",
+        "get_warning_service",
+        "get_overdue_service",
+        "get_submit_case_register_service",
+        "get_shelve_case_register_service",
+        "get_server_month_add_service"
+    ]);
+
+    function handleBackendResponse(data) {
+        if (!data) {
+            alert('请求失败: 未知错误');
+            log('请求失败: 未知错误', 'error');
+            return;
+        }
+        if(data.statusCode === 200 && data.type === 'get_my_functions'){
+            applyPermissions(data.data.function_keys)
+        } else if (data.statusCode === 200 && data.type === 'get_user_list') {
+            allUsers = data.data;
+            filteredUsers = [...allUsers];
+            updateUserList();
+            updateUserCount();
+            document.getElementById('userListModal').style.display = 'block';
+            log('成功获取并显示顾问列表', 'success');
+        } else if(data.statusCode === 200 && data.type === 'get_sys_user_list'){
+            allSysUsers = data.data;
+            filteredSysUsers = [...allSysUsers];
+            updateSysUserList();
+            document.getElementById('sysUserModel').style.display = 'block';
+            log('成功获取并显示系统账号列表', 'success');
+
+        } else if(data.statusCode === 200 && data.type === 'get_role_list'){
+            if(data.context === "add_sys_user"){
+                renderRolesCheckboxes(
+                    "roleCheckboxList",
+                    "sysUserRoleIds",
+                    data.data,
+                    []
+                )
+            } else if(data.context === "update_sys_user"){
+                renderRolesCheckboxes(
+                    "updateRoleCheckboxList",
+                    "updateSysUserRoleIds",
+                    data.data,
+                    pendingSysUserRoleIds
+                )
+            } else {
+                allRoles = data.data;
+                filteredRoles = [...allRoles]
+                updateRoleList()
+                document.getElementById('roleModel').style.display = 'block';
+                log('成功获取并显示角色列表', 'success');
+            }
+        } else if(data.statusCode === 200 && data.type === 'get_fun_list'){
+            if (data.context === "add_role") {
+                renderFunctionCheckboxes(
+                    "functionCheckboxList",
+                    "functionIds",
+                    data.data,
+                    []  // 新增不需要回显
+                );
+                document.getElementById("addRoleModal").style.display = "block";
+            }
+            else if (data.context === "update_role") {
+                renderFunctionCheckboxes(
+                    "updateFunctionCheckboxList",
+                    "updateFunctionIds",
+                    data.data,
+                    pendingRoleFunctionIds  // 回显当前角色的已选功能
+                );
+                document.getElementById("updateRoleModal").style.display = "block";
+                pendingRoleFunctionIds = [];
+            }  else {
+                allFunctions = data.data;
+                filteredFunctions = [...allFunctions]
+                updateFunctionList()
+                document.getElementById('functionModel').style.display = 'block';
+                log('成功获取并显示函数列表', 'success');
+            }
+
+        } else if (data.statusCode === 200 && data.type === 'get_await_audit_postpone') {
+            awaitAuditPostponeList = [...data.data];
+            updateAwaitAuditPostponeList();
+            updateAwaitAuditPostponeListCount();
+            log('成功获取并显示待审核延期数据列表', 'success');
+        } else if (data.statusCode === 200 && data.type === 'get_not_steward_list') {
+            allNotStewardList = data.data;
+            updateStewardList();
+        } else if (data.statusCode === 200 && ALERT_ONLY_TYPES.has(data.type)) {
+            alert(data.message);
+            log(data.message, 'success');
+        } else if (data.type === 'submit_batch_audit_postpone') {
+            alert(data.message);
+            getAwaitAuditPostponeList();
+        } else {
+            alert('请求失败: ' + (data.message || '未知错误'));
+            log('请求失败: ' + (data.message || '未知错误'), 'error');
+        }
+    }
+
+    // ==================== 列表渲染 ====================
+    function updateStewardList() {
+        const notStewardListDiv = document.getElementById('notStewardList');
+        document.getElementById('notStewardCount').textContent = allNotStewardList.length;
+
+        if (allNotStewardList.length === 0) {
+            notStewardListDiv.innerHTML = '<div style="color: #666; text-align: center; padding: 40px;">暂无数据</div>';
+            openModal('notStewardModal', '打开已获取未分配管家的客户数据窗口');
+            return;
+        }
+
+        let html = '';
+        allNotStewardList.forEach((user, index) => {
+            html += `
+                <div class="user-item" style="padding: 10px; border-bottom: 1px solid #eee; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;"
+                     onmouseover="this.style.background='#f0f8ff'"
+                     onmouseout="this.style.background='white'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${index + 1}. ${user.company_name}</strong>
+                            ${user.salesman_company ? `<span style="color: #666; margin-left: 10px;">${user.salesman_company}</span>` : ''}
+                        </div>
+                        <div style="color: #888; font-size: 12px;">
+                            套餐类型: ${user.item_name || 'N/A'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        notStewardListDiv.innerHTML = html;
+        openModal('notStewardModal', '打开已获取未分配管家的客户数据窗口');
+    }
+
+    function updateAwaitAuditPostponeListCount() {
+        document.getElementById('awaitAuditPostponeListCount').textContent = awaitAuditPostponeList.length + '';
+    }
+
+    function updateAwaitAuditPostponeList() {
+        const div = document.getElementById('awaitAuditPostponeList');
+
+        if (awaitAuditPostponeList.length === 0) {
+            div.innerHTML = '<div style="color: #666; text-align: center; padding: 40px;">暂无数据</div>';
+            return;
+        }
+
+        let html = '';
+        awaitAuditPostponeList.forEach((obj, index) => {
+            const { company_name, service_name, item_name, first_time, new_time, delay_reason, create_time, delay_id, service_id, create_by } = obj;
+            html += `
+                <div class="user-item" style="padding: 10px; border-bottom: 1px solid #eee; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;"
+                     onclick="changeAwaitAudit(${delay_id}, ${service_id}, '${new_time}')"
+                     onmouseover="this.style.background='#f0f8ff'"
+                     onmouseout="this.style.background='white'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${index + 1}. ${company_name}
+                                <span style="font-size: 12px">（${item_name}）</span>
+                                <div style="float: right"><span id="${delay_id}" style="display: none; color: red; transform: skewX(-30deg);">已选择</span></div>
+                            </strong>
+                            <div><span style="color: #666; font-size: 13px; margin-left: 10px;">服务名称：${service_name}</span></div>
+                            <div><span style="color: #666; font-size: 13px; margin-left: 10px;">延期理由：${delay_reason}</span></div>
+                            <div><span style="color: #094edf; font-size: 13px; margin-left: 10px;">申请人：${create_by}</span></div>
+                            <div><span style="color: #666; font-size: 13px; margin-left: 10px;">申请时间：${create_time}</span></div>
+                        </div>
+                    </div>
+                    <div><span style="color: #888; font-size: 12px; margin-left: 10px;">旧交付时间: ${first_time || 'N/A'}</span></div>
+                    <div><span style="color: #ff0000; font-size: 12px; margin-left: 10px;">新交付时间: ${new_time || 'N/A'}</span></div>
+                    <div><span style="color: #888; font-size: 12px; margin-left: 10px;">审核ID: ${delay_id || 'N/A'}</span></div>
+                </div>
+            `;
+        });
+        div.innerHTML = html;
+    }
+
+    function updateFunction(functionId, functionName, functionKey, functionButton){
+        document.getElementById("updateFunctionId").value = functionId
+        document.getElementById("updateFunctionName").value = functionName
+        document.getElementById("updateFunctionKey").value = functionKey
+        document.getElementById("updateFunctionButton").value = functionButton
+        openModal('updateFunctionModal', '修改函数')
+    }
+
+    function updateFunctionList() {
+        const functionListDiv = document.getElementById('functionList');
+
+        if (filteredFunctions.length === 0) {
+            functionListDiv.innerHTML = '<div style="color: #666; text-align: center; padding: 40px;">暂无数据</div>';
+            return;
+        }
+
+        let html = '';
+        filteredFunctions.forEach((fun, index) => {
+            let funName = fun.function_name || '未知函数';
+
+            html += `
+                <div class="role-item" style="padding: 10px; border-bottom: 1px solid #eee; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;"
+                     onclick="updateFunction(${fun.id}, '${funName}', '${fun.function_key}', '${fun.function_button}')"
+                     onmouseover="this.style.background='#f0f8ff'"
+                     onmouseout="this.style.background='white'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${index + 1}</strong>
+                            ${funName ? `<span style="color: #666; margin-left: 10px;">${funName}</span>
+                                <span style="color: #666; margin-left: 10px; font-size: 12px;"></span>` : ''}
+                        </div>
+                        <div style="color: #888; font-size: 12px;">ID: ${fun.id || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        functionListDiv.innerHTML = html;
+    }
+
+    function openAddSysUserModal(open_type, open_text){
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+        try {
+            bridge.handle_js_message(JSON.stringify({
+                type: "get_role_list",
+                context: "add_sys_user"
+            }));
+        } catch (error) {
+        }
+        openModal(open_type, open_text)
+    }
+
+    function openAddRoleModal(open_type, open_text){
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+        try {
+            bridge.handle_js_message(JSON.stringify({
+                type: "get_fun_list",
+                context: "add_role"
+            }));
+        } catch (error) {
+        }
+        openModal(open_type, open_text)
+    }
+
+    function updateRoleView(roleId, remark, roleName, functionIdsStr){
+        document.getElementById("updateRoleId").value = roleId
+        document.getElementById("updateRoleName").value = roleName
+        document.getElementById("updateRemark").value = remark
+
+        // 记下当前角色的 function_ids，等响应回来时用它回显
+        pendingRoleFunctionIds = functionIdsStr.split(',').map(Number) || [];
+
+        bridge.handle_js_message(JSON.stringify({
+            type: "get_fun_list",
+            context: "update_role"
+        }));
+
+        openModal('updateRoleModal', '修改角色')
+    }
+
+    function updateRoleList() {
+        const roleListDiv = document.getElementById('roleList');
+
+        if (filteredRoles.length === 0) {
+            roleListDiv.innerHTML = '<div style="color: #666; text-align: center; padding: 40px;">暂无数据</div>';
+            return;
+        }
+
+        let html = '';
+        filteredRoles.forEach((role, index) => {
+            let roleName = role.role_name || '未知用户';
+
+            html += `
+                <div class="role-item" style="padding: 10px; border-bottom: 1px solid #eee; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;"
+                     onclick="updateRoleView(${role.role_id}, '${role.remark}', '${role.role_name}', '${role.functionIdsStr}')"
+                     onmouseover="this.style.background='#f0f8ff'"
+                     onmouseout="this.style.background='white'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${index + 1}</strong>
+                            ${roleName ? `<span style="color: #666; margin-left: 10px;">${roleName}</span>
+                                <span style="color: #666; margin-left: 10px; font-size: 12px;"></span>` : ''}
+                        </div>
+                        <div style="color: #888; font-size: 12px;">ID: ${role.role_id || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        roleListDiv.innerHTML = html;
+    }
+
+    function updateSysUser(sysUserId, sysUserName, sysNickName, roleIds){
+        document.getElementById("updateSysUserId").value = sysUserId
+        document.getElementById("updateSysUserName").value = sysUserName
+        document.getElementById("updateSysNickName").value = sysNickName
+
+        // 记下当前角色的 function_ids，等响应回来时用它回显
+        pendingSysUserRoleIds = roleIds.split(',').map(Number) || [];
+
+        bridge.handle_js_message(JSON.stringify({
+            type: "get_role_list",
+            context: "update_sys_user"
+        }));
+
+        openModal('updateSysUserModal', '修改系统用户')
+    }
+
+    function updateSysUserList(){
+        const sysUserListDiv = document.getElementById('sysUserList');
+
+        if (filteredSysUsers.length === 0) {
+            sysUserListDiv.innerHTML = '<div style="color: #666; text-align: center; padding: 40px;">暂无数据</div>';
+            return;
+        }
+
+        let html = '';
+        filteredSysUsers.forEach((user, index) => {
+            let sysUserName = user.sysUserName || '未知用户';
+            let sysNickName = user.sysNickName || '';
+            const searchTerm = document.getElementById('sysUserSearch').value.toLowerCase();
+
+            if (searchTerm) {
+                const nameMatch = sysUserName.toLowerCase().indexOf(searchTerm);
+                if (nameMatch !== -1) {
+                    sysUserName = sysUserName.substring(0, nameMatch) +
+                        `<mark style="background: yellow;">${sysUserName.substring(nameMatch, nameMatch + searchTerm.length)}</mark>` +
+                        sysUserName.substring(nameMatch + searchTerm.length);
+                }
+                const nickMatch = sysNickName.toLowerCase().indexOf(searchTerm);
+                if (nickMatch !== -1) {
+                    sysNickName = sysNickName.substring(0, nickMatch) +
+                        `<mark style="background: yellow;">${sysNickName.substring(nickMatch, nickMatch + searchTerm.length)}</mark>` +
+                        sysNickName.substring(nickMatch + searchTerm.length);
+                }
+            }
+
+            html += `
+                <div class="user-item" style="padding: 10px; border-bottom: 1px solid #eee; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;"
+                     onclick="updateSysUser(${user.user_id}, '${sysUserName}', '${sysNickName}', '${user.roleIds}')"
+                     onmouseover="this.style.background='#f0f8ff'"
+                     onmouseout="this.style.background='white'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${index + 1}. ${sysNickName}</strong>
+                            ${sysNickName ? `<span style="color: #666; margin-left: 10px;">${sysUserName}</span>` : ''}
+                        </div>
+                        <div style="color: #888; font-size: 12px;">ID: ${user.user_id || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        sysUserListDiv.innerHTML = html;
+    }
+
+    function updateUserList() {
+        const userListDiv = document.getElementById('userList');
+
+        if (filteredUsers.length === 0) {
+            userListDiv.innerHTML = '<div style="color: #666; text-align: center; padding: 40px;">暂无数据</div>';
+            return;
+        }
+
+        let html = '';
+        filteredUsers.forEach((user, index) => {
+            let userName = user.user_name || '未知用户';
+            let nickName = user.nick_name || '';
+            const role_name = user.role_name || '';
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+
+            if (searchTerm) {
+                const nameMatch = userName.toLowerCase().indexOf(searchTerm);
+                if (nameMatch !== -1) {
+                    userName = userName.substring(0, nameMatch) +
+                        `<mark style="background: yellow;">${userName.substring(nameMatch, nameMatch + searchTerm.length)}</mark>` +
+                        userName.substring(nameMatch + searchTerm.length);
+                }
+                const nickMatch = nickName.toLowerCase().indexOf(searchTerm);
+                if (nickMatch !== -1) {
+                    nickName = nickName.substring(0, nickMatch) +
+                        `<mark style="background: yellow;">${nickName.substring(nickMatch, nickMatch + searchTerm.length)}</mark>` +
+                        nickName.substring(nickMatch + searchTerm.length);
+                }
+            }
+
+            html += `
+                <div class="user-item" style="padding: 10px; border-bottom: 1px solid #eee; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;"
+                     onclick="selectUser(${user.user_id})"
+                     onmouseover="this.style.background='#f0f8ff'"
+                     onmouseout="this.style.background='white'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${index + 1}. ${userName}</strong>
+                            ${nickName ? `<span style="color: #666; margin-left: 10px;">${nickName}</span>
+                            <span style="color: #666; margin-left: 10px;">${role_name}</span>` : ''}
+                        </div>
+                        <div style="color: #888; font-size: 12px;">ID: ${user.user_id || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        userListDiv.innerHTML = html;
+    }
+
+    function updateUserCount() {
+        const totalCount = allUsers.length;
+        const filteredCount = filteredUsers.length;
+        const countElement = document.getElementById('userCount');
+
+        if (filteredCount === totalCount) {
+            countElement.textContent = totalCount;
+            countElement.style.color = '#666';
+        } else {
+            countElement.textContent = `${filteredCount}/${totalCount}`;
+            countElement.style.color = '#007bff';
+        }
+    }
+
+    // ==================== 延期审批 ====================
+    function changeAwaitAudit(delay_id, service_id, new_time) {
+        if (changeAwaitAuditDist[delay_id]) {
+            delete changeAwaitAuditDist[delay_id];
+            document.getElementById(delay_id).style.display = 'none';
+        } else {
+            changeAwaitAuditDist[delay_id] = { service_id, new_time };
+            document.getElementById(delay_id).style.display = 'inline-block';
+        }
+        document.getElementById('changeAwaitAuditCount').textContent = Object.keys(changeAwaitAuditDist).length + '';
+    }
+
+    function changeAllAwaitAudit() {
+        changeAwaitAuditDist = {};
+        awaitAuditPostponeList.forEach(obj => {
+            document.getElementById(obj.delay_id).style.display = 'inline-block';
+            changeAwaitAuditDist[obj.delay_id] = { service_id: obj.service_id, new_time: obj.new_time };
+        });
+        document.getElementById('changeAwaitAuditCount').textContent = Object.keys(changeAwaitAuditDist).length + '';
+    }
+
+    function cancelAllAwaitAudit() {
+        changeAwaitAuditDist = {};
+        awaitAuditPostponeList.forEach(obj => {
+            document.getElementById(obj.delay_id).style.display = 'none';
+        });
+        document.getElementById('changeAwaitAuditCount').textContent = '0';
+    }
+
+    function submitBatchAuditPostpone() {
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+        const dataInfo = {
+            type: 'submit_batch_audit_postpone',
+            changeData: changeAwaitAuditDist,
+            auditStatus: document.querySelector('input[name="language"]:checked').value
+        };
+
+        if (Object.keys(changeAwaitAuditDist).length <= 0) {
+            alert('请选择至少一项待审核数据');
+            return;
+        }
+        log('提交待审核数据审批申请: ' + JSON.stringify(dataInfo), 'info');
+        try {
+            bridge.handle_js_message(JSON.stringify(dataInfo));
+            closeModal('certifiedFinal');
+            log('提交待审核数据审批申请成功', 'success');
+        } catch (error) {
+            log('提交待审核数据审批申请失败: ' + error, 'error');
+        }
+    }
+
+    function getAwaitAuditPostponeList() {
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+        changeAwaitAuditDist = {};
+        document.getElementById('changeAwaitAuditCount').textContent = '0';
+        bridge.handle_js_message(JSON.stringify({ type: 'get_await_audit_postpone' }));
+    }
+
+    // ==================== 用户选择 ====================
+    function filterUserList() {
+        const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+        if (!searchTerm) {
+            filteredUsers = [...allUsers];
+        } else {
+            filteredUsers = allUsers.filter(user =>
+                (user.user_name && user.user_name.toLowerCase().includes(searchTerm)) ||
+                (user.nick_name && user.nick_name.toLowerCase().includes(searchTerm))
+            );
+        }
+        updateUserList();
+        updateUserCount();
+    }
+
+    function selectUser(userId) {
+        const user = allUsers.find(u => u.user_id === userId);
+        if (!user) return;
+
+        let html, text;
+        if (user.role_name === '法律顾问') {
+            html = '法律顾问：';
+            text = '';
+            updateList(user, userId, '法律顾问');
+            Object.keys(selectLawList).forEach(key => { text += selectLawList[key] + '、'; });
+            text = text.length > 0 ? text.substring(0, text.length - 1) : text;
+            html += text;
+            document.getElementById('selectLaw').textContent = html;
+            document.getElementById('lawers').value = text;
+        } else {
+            html = '服务顾问：';
+            text = '';
+            updateList(user, userId, '服务顾问');
+            Object.keys(selectServerList).forEach(key => { text += selectServerList[key] + '、'; });
+            text = text.length > 0 ? text.substring(0, text.length - 1) : text;
+            html += text;
+            document.getElementById('selectServer').textContent = html;
+            document.getElementById('server').value = text;
+        }
+        log('选中用户:' + user.user_name, 'info');
+    }
+
+    function updateList(user, userId, type) {
+        const target = (type === '法律顾问' || type === '合同顾问') ? selectLawList : selectServerList;
+        if (target[userId]) {
+            log('取消选择：' + user.user_name, 'info');
+            delete target[userId];
+        } else {
+            target[userId] = user.user_name;
+        }
+    }
+
+    function openSysUserListModal(open_type, open_text){
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+        bridge.handle_js_message(JSON.stringify({ type: 'get_sys_user_list' }));
+        openModal(open_type, open_text);
+    }
+
+    function openFunListModal(open_type, open_text){
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+        bridge.handle_js_message(JSON.stringify({ type: 'get_fun_list', context: 'add_function' }));
+        openModal(open_type, open_text);
+    }
+
+    function openRoleListModal(open_type, open_text) {
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+        bridge.handle_js_message(JSON.stringify({ type: 'get_role_list' }));
+        openModal(open_type, open_text);
+    }
+
+    function openUserListModal() {
+        if (!bridge) {
+            alert('桥接对象未就绪');
+            return;
+        }
+        bridge.handle_js_message(JSON.stringify({ type: 'get_user_list' }));
+        openModal('userListModal', '打开顾问列表窗口');
+    }
+
+    function renderRolesCheckboxes(containerId, checkboxName, functions, selectedIds) {
+        const container = document.getElementById(containerId);
+        const selectedSet = new Set(selectedIds);
+
+        container.innerHTML = functions.map(role => `
+            <label style="display: flex; align-items: center; gap: 8px; margin: 6px 0; cursor: pointer; padding: 4px 6px; border-radius: 4px;"
+                   onmouseover="this.style.background='#f0f8ff'"
+                   onmouseout="this.style.background='transparent'">
+                <input type="checkbox" name="${checkboxName}" value="${role.role_id}"
+                       ${selectedSet.has(role.role_id) ? 'checked' : ''}
+                       style="margin: 0; flex-shrink: 0; width: 16px; height: 16px;">
+                <span style="font-size: 14px; flex: 1;">${role.role_name}</span>
+            </label>
+        `).join("");
+    }
+
+    function renderFunctionCheckboxes(containerId, checkboxName, functions, selectedIds) {
+        const container = document.getElementById(containerId);
+        const selectedSet = new Set(selectedIds);
+
+        container.innerHTML = functions.map(f => `
+            <label style="display: flex; align-items: center; gap: 8px; margin: 6px 0; cursor: pointer; padding: 4px 6px; border-radius: 4px;"
+                   onmouseover="this.style.background='#f0f8ff'"
+                   onmouseout="this.style.background='transparent'">
+                <input type="checkbox" name="${checkboxName}" value="${f.id}"
+                       ${selectedSet.has(f.id) ? 'checked' : ''}
+                       style="margin: 0; flex-shrink: 0; width: 16px; height: 16px;">
+                <span style="font-size: 14px; flex: 1;">${f.function_name}</span>
+            </label>
+        `).join("");
+    }
+
+    // ==================== 弹窗控制 ====================
+    function openModal(open_type, open_text) {
+        if (open_type === 'batchInsertRefundModal') {
+            alert('导入退费客户前，请检查这份文件是否是全部数据，请勿重新导入全部数据!!!!');
+        } else if (open_type === 'batch_insert_mediate_upgrade') {
+            alert('导入调解升级客户前，请检查这份文件是否是全部数据，请勿重新导入全部数据!!!!');
+        }
+        document.getElementById(open_type).style.display = 'block';
+        if (open_text) log(open_text, 'info');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        log('关闭弹出窗: ' + modalId, 'info');
+    }
+
+    // ==================== 日志 ====================
+    function log(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = document.createElement('div');
+        logEntry.className = type;
+        logEntry.textContent = '[' + timestamp + '] ' + message;
+        logElement.appendChild(logEntry);
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    // ==================== 初始化 ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        initWebChannel();
+        log('页面加载完成', 'info');
+    });
+</script>
+</body>
+</html>

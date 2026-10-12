@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Mini-Project"
+version = "1.0.0"
+
+[tool.setuptools]
+packages = {find = {where = ["src"]}}
+
+[tool.setuptools.package-dir]
+my_package = "src/package"
+
+[tool.poetry.build]
+include = ["src/package/__init__.py", "src/package/sync.py"]

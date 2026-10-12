@@ -1,0 +1,44 @@
+# aliyun镜像设置，windos可以使用cmd
+# 创建pip配置目录（如果不存在）
+mkdir %APPDATA%\pip
+
+# 创建配置文件
+echo [global] > %APPDATA%\pip\pip.ini
+echo index-url = https://mirrors.aliyun.com/pypi/simple/ >> %APPDATA%\pip\pip.ini
+echo trusted-host = mirrors.aliyun.com >> %APPDATA%\pip\pip.ini
+
+# 打包
+pip3 install pyinstaller
+
+# 进度条依赖
+pip3 install tqdm
+
+# 页面窗口依赖
+pip3 install PyQt5
+pip3 install PyQtWebEngine
+
+# 时间工具包依赖
+pip3 install python-dateutil
+
+# excel工具依赖
+pip3 install openpyxl
+
+# websockets依赖
+pip3 install websockets
+
+# mysql依赖
+pip3 install pymysql
+
+# 配置文件加密工具包
+pip3 install pycryptodome
+
+# 数据库工具类
+pip3 install dbutils
+
+# excel快速筛选类
+pip3 install pandas
+
+# 请求模块
+pip3 install requests
+
+pip3 install cryptography
