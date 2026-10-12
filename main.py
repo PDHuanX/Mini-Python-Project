@@ -91,7 +91,7 @@ class MessageType:
     GET_SERVER_MONTH_ADD_SERVICE = "get_server_month_add_service"
 
 class ErrorMessages:
-    UNKNOWN_MESSAGE_TYPE = "收到了你的申请、请求、投诉、举报、揭发等等等等，但是我就是不处理，你能咋滴，咬我啊"
+    UNKNOWN_MESSAGE_TYPE = "未知类型"
     JSON_PARSE_ERROR = "JSON解析失败"
     FILE_NOT_FOUND = "HTML文件未找到"
     UNKNOWN_ERROR = "未知错误"
@@ -464,7 +464,7 @@ class MainWindow(QMainWindow):
 
     def _init_ui(self) -> None:
         """初始化UI界面"""
-        self.setWindowTitle("功能窗口（估计已是终版，大概吧。。。）")
+        self.setWindowTitle("功能窗口")
         self.setGeometry(50, 50, 1000, 900)
 
         # 创建中央部件和布局
