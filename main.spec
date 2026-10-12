@@ -7,7 +7,7 @@ a = Analysis(
     datas=[
         ('resources/*', 'resources/'),
         ('logs/*', 'logs/'),
-        ('html/data_button.html', 'html/')
+        ('html/*', 'html/')
     ],
     hiddenimports=[],
     hookspath=[],
