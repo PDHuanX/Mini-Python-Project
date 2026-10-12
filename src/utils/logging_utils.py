@@ -4,7 +4,7 @@ from . import paths_utils as paths
 LOG_DIR = paths.get_resource_path("logs")
 
 logger = logging.getLogger("app_logger")
-logger.setLevel(logging.INFO)  # INFO 级别，ERROR 自然也能记录
+logger.setLevel(logging.INFO)
 logger.propagate = False
 
 if not logger.handlers:
