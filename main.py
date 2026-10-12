@@ -235,112 +235,94 @@ class Bridge(QObject):
 
         return ""
 
-    """月初执行-服务顾问月度新增事项"""
     @staticmethod
     def _handle_get_server_month_add_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_server_month_add_service(data)
 
-    """月初执行-走到立案节点的数据"""
     @staticmethod
     def _handle_get_submit_case_register_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_submit_case_register_service(data)
 
-    """月初执行-搁置事项数（依据立案模块搁置数据）"""
     @staticmethod
     def _handle_get_shelve_case_register_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         _ = data
         return public_get_shelve_case_register_service()
 
-    """获取逾期事项"""
     @staticmethod
     def _handle_get_overdue_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_overdue_service(data)
 
-    """获取预警事项"""
     @staticmethod
     def _handle_get_warning_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         _ = data
         return public_get_warning_service()
 
-    """获取指定日期的延期事项"""
     @staticmethod
     def _handle_get_delay_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_delay_service(data)
 
-    """获取指定日期的暂停事项"""
     @staticmethod
     def _handle_get_pause_service(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_pause_service(data)
 
-    """回退交付状态"""
     @staticmethod
     def _handle_rollback_status(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_rollback_status(data)
 
-    """修改系统用户"""
     @staticmethod
     def _handle_update_sys_user_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_update_sys_user(data)
 
-    """新增系统用户"""
     @staticmethod
     def _handle_add_sys_user_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_add_sys_user(data)
 
-    """获取系统用户"""
     @staticmethod
     def _handle_get_sys_user_list_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         _ = data
         return public_get_sys_user_list()
 
-    """修改函数"""
     @staticmethod
     def _handle_update_function_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_update_function(data)
 
-    """新增函数"""
     @staticmethod
     def _handle_add_function_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_add_function(data)
 
-    """获取函数列表"""
     @staticmethod
     def _handle_get_fun_list_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_fun_list(data)
 
-    """修改角色"""
     @staticmethod
     def _handle_update_role_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_update_role(data)
 
-    """新增角色"""
     @staticmethod
     def _handle_add_role_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_add_role(data)
 
-    """获取角色合集"""
     @staticmethod
     def _handle_get_role_list_(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_role_list(data)
 
-    """处理数据同步"""
     @staticmethod
     def _handle_sync_data(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
@@ -350,7 +332,6 @@ class Bridge(QObject):
             out_file_name=data.get('newFileName')
         )
 
-    """获取用户列表"""
     @staticmethod
     def _handle_get_user_list(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
@@ -358,28 +339,24 @@ class Bridge(QObject):
         _ = data
         return public_get_user_list()
 
-    """批量插入数据"""
     @staticmethod
     def _handle_batch_insert(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
         return public_batch_insert(data)
 
-    """获取分公司交付数据"""
     @staticmethod
     def _handle_salesman_delivery(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
         return public_get_salesman_delivery_main(data)
 
-    """获取未分配管家的客户数据"""
     @staticmethod
     def _handle_not_steward(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
         _ = self
         return public_get_not_steward(data)
 
-    """获取待审核列表"""
     @staticmethod
     def _handle_get_await_audit_postpone(self, data: Dict[str, Any]) -> DictResult:
         """因为调用方式，需要保持函数入参一致性，但右上角警告挺烦的，所以忽略"""
@@ -387,88 +364,72 @@ class Bridge(QObject):
         _ = data
         return public_get_await_audit_postpone()
 
-    """批量审批延期"""
     @staticmethod
     def _handle_submit_batch_audit_postpone(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_submit_batch_audit_postpone(data)
 
-    """批量导入退款客户数据"""
     @staticmethod
     def _handle_batch_insert_refound(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_batch_insert_refound(data)
 
-    """批量导入调解升级客户"""
     @staticmethod
     def _handle_batch_insert_mediate_upgrade(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_batch_insert_mediate_upgrade(data)
-
-    """获取管家在期数据(new)"""
 
     @staticmethod
     def _handle_get_steward_server_during_data_to_excel_new(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_steward_server_during_data_to_excel_new(data)
 
-    """获取管家在期数据"""
     @staticmethod
     def _handle_get_steward_server_during_data_to_excel(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_steward_server_during_data_to_excel(data)
 
-    """获取服务顾问在期数据"""
     @staticmethod
     def _handle_get_server_during_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_server_during_data(data)
 
-    """获取法律顾问在期数据"""
     @staticmethod
     def _handle_get_law_during_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_law_during_data(data)
 
-    """获取法律顾问过期数据"""
     @staticmethod
     def _handle_get_law_out_date_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_law_out_date_data(data)
 
-    """获取服务顾问过期数据"""
     @staticmethod
     def _handle_get_server_out_date_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_server_out_date_data(data)
 
-    """获取分公司在期客户数据"""
     @staticmethod
     def _handle_get_salesman_company_during_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_salesman_company_during_data(data)
 
-    """获取两岗顾问在期/过期客户数据(广西)，本身是将其他4个分支功能合并成一个独立的按钮"""
     @staticmethod
     def _handle_get_two_job_during_and_out_customer_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_two_job_during_and_out_customer(data)
 
-    """宇益抽查数据，获取指定法律顾问的某个时间段交付数据"""
     @staticmethod
     def _handle_get_delivery_url_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         return public_get_delivery_url_data(data)
 
-    """获取立案跟进天数剩余0天数据"""
     @staticmethod
     def _handle_get_register_day_zero_data(self, data: Dict[str, Any]) -> DictResult:
         _ = self
         _ = data
         return public_get_register_data()
 
-
-    """获取当前用户权限"""
     @staticmethod
     def _handle_get_my_functions(self, data: Dict[str, Any]) -> DictResult:
         _ = self
