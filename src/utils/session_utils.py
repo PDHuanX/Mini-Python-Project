@@ -1,8 +1,9 @@
 import json
 import time
 from pathlib import Path
+from src.utils.paths_utils import get_resource_path
 
-SESSION_FILE = Path("resources/session.json")
+SESSION_FILE = Path(f"{get_resource_path('resources')}/session.json")
 SESSION_TTL_HOURS = 12
 
 def save_session(session: dict) -> None:
